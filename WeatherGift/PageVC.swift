@@ -56,13 +56,29 @@ class PageVC: UIPageViewController {
         listButton.setBackgroundImage(UIImage(named: "listbutton"), for: .normal)
         listButton.setBackgroundImage(UIImage(named: "listbutton-highlighted"), for: .highlighted)
         
-        listButton.addTarget(self, action: #selector(segueToLocationsListVC), for: .touchUpInside)
+        listButton.addTarget(self, action: #selector(segueToListVC), for: .touchUpInside)
         
         view.addSubview(listButton)
     }
     
-    func segueToLocationsListVC() {
-        print("Hey! You clicked me!")
+    //MARK: - Segues
+    
+    func segueToListVC(sender: UIButton!) {
+        performSegue(withIdentifier: "ToListVC", sender: sender)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ToListVC" {
+            let controller = segue.destination as! ListVC
+            controller.locationsArray = locationsArray
+            controller.currentPage = currentPage
+        }
+    }
+    
+    @IBAction func unwindFromListVC(sender: UIStoryboardSegue) {
+        pageControl.numberOfPages = locationsArray.count
+        pageControl.currentPage = currentPage
+        setViewControllers([createDetailVC(forPage: currentPage)], direction: .forward, animated: false, completion: nil)
     }
 
     //MARK: - Create View Controller for UIPageViewController
