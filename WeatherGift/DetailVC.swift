@@ -28,9 +28,12 @@ class DetailVC: UIViewController {
         if currentPage == 0 {
         getLocation()
         }
+       updateUserInterface()
+    }
+    
+    func updateUserInterface() {
         locationLabel.text = locationsArray[currentPage].name
         dateLabel.text = locationsArray[currentPage].coordinates
-        
     }
 }
 
@@ -64,18 +67,42 @@ extension DetailVC: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        currentLocation = locations.last
-        
-        let currentLat = "\(currentLocation.coordinate.latitude)"
-        let currentLong = "\(currentLocation.coordinate.longitude)"
-        print("Coordinates are: " + currentLat + currentLong)
-        
+        if currentPage == 0 {
+            
+            let geoCoder = CLGeocoder()
+            
+            currentLocation = locations.last
+            
+            let currentLat = "\(currentLocation.coordinate.latitude)"
+            let currentLong = "\(currentLocation.coordinate.longitude)"
+            print("Coordinates are: " + currentLat + currentLong)
+            
+            
+            
+            var place = ""
+            geoCoder.reverseGeocodeLocation(currentLocation, completionHandler: {placemarks,
+                error in
+                if placemarks != nil {
+                    let placemark = placemarks!.last
+                    place = (placemark?.name!)!
+                } else {
+                    print("Error retrieving place. Error code: \(error)")
+                    place = "Parts Unknown"
+                }
+                print(place)
+                self.locationsArray[0].name = place
+                self.locationsArray[0].coordinates = currentLat + "," + currentLong
+                self.locationsArray[0].getWeather()
+                self.updateUserInterface()
+            })
+            
+        }
         locationManager.stopUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         
-        
+        print("Error getting location. Error code: \(error)")
     }
 }
 
