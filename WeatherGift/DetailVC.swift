@@ -28,12 +28,23 @@ class DetailVC: UIViewController {
         if currentPage == 0 {
         getLocation()
         }
-       updateUserInterface()
+        locationsArray[currentPage].getWeather {
+            self.updateUserInterface()
+        }
     }
     
     func updateUserInterface() {
+        
+        var isHidden = (locationsArray[currentPage].currentTemp == -999.999)
+        temperatureLabel.isHidden = isHidden
+        locationLabel.isHidden = isHidden
+        
         locationLabel.text = locationsArray[currentPage].name
         dateLabel.text = locationsArray[currentPage].coordinates
+        let curTemperature = String(format: "%3.f", locationsArray[currentPage].currentTemp) + "°"
+        temperatureLabel.text = curTemperature
+        summaryLabel.text = locationsArray[currentPage].dailySummary
+        print("%%% curTemperature inside user interface = \(curTemperature)")
     }
 }
 
@@ -92,8 +103,9 @@ extension DetailVC: CLLocationManagerDelegate {
                 print(place)
                 self.locationsArray[0].name = place
                 self.locationsArray[0].coordinates = currentLat + "," + currentLong
-                self.locationsArray[0].getWeather()
-                self.updateUserInterface()
+                self.locationsArray[0].getWeather {
+                    self.updateUserInterface()
+                }
             })
             
         }
