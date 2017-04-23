@@ -19,6 +19,13 @@ class WeatherLocation {
         var dailyIcon: String
     }
     
+    struct HourlyForecast {
+        var hourlyTime: Double
+        var hourlyTemp: Double
+        var hourlyIcon: String
+        var hourlyPrecipProb: Double
+    }
+    
     var name = ""
     var coordinates = ""
     var currentTemp = -999.999
@@ -27,6 +34,7 @@ class WeatherLocation {
     var currentTime = 0.0
     var timeZone = ""
     var dailyForecastArray = [DailyForecast]()
+    var hourlyForecastArray = [HourlyForecast]()
     
     func getWeather(completed: @escaping () -> ()) {
         
@@ -80,6 +88,16 @@ class WeatherLocation {
                     self.dailyForecastArray.append(DailyForecast(dailyMaxTemp: maxTemp, dailyMinTemp: minTemp, dailySummary: dailySummary, dailyDate: dateValue, dailyIcon: iconName))
                 }
                 
+                let hourlyDataArray = json["hourly"]["data"]
+                self.hourlyForecastArray = []
+                let lastHour = min(hourlyDataArray.count - 1, 24)
+                for hour in 1...lastHour {
+                    let hourlyTime = json["hourly"]["data"][hour]["time"].doubleValue
+                    let hourlyIcon = json["hourly"]["data"][hour]["icon"].stringValue
+                    let hourlyTemp = json["hourly"]["data"][hour]["temperature"].doubleValue
+                    let hourlyPrecipProb = json["hourly"]["data"][hour]["precipProbability"].doubleValue
+                    self.hourlyForecastArray.append(HourlyForecast(hourlyTime: hourlyTime, hourlyTemp: hourlyTemp, hourlyIcon: hourlyIcon, hourlyPrecipProb: hourlyPrecipProb))
+                }
                 case .failure(let error):
                 print(error)
             }
