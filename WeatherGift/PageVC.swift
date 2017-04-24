@@ -35,7 +35,7 @@ class PageVC: UIPageViewController {
             }
 
         
-        var newLocation = WeatherLocation()
+        let newLocation = WeatherLocation()
         newLocation.name = "Unknown Weather Location"
         if locationsArray.count == 0 {
             locationsArray.append(newLocation)

@@ -31,11 +31,15 @@ class DetailVC: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         locationManager.delegate = self
-        if currentPage == 0 {
-            getLocation()
-        }
         locationsArray[currentPage].getWeather {
             self.updateUserInterface()
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if currentPage == 0 {
+            getLocation()
         }
     }
     
@@ -87,11 +91,21 @@ extension DetailVC: CLLocationManagerDelegate {
         case .authorizedWhenInUse, .authorizedAlways:
             locationManager.startUpdatingLocation()
         case .denied:
-            print("I'm sorry I can't show location, user has not authorized it")
+            if currentPage == 0 && self.view.window != nil {
+            showAlert(title: "User has not authorized location services", message: "Open the Settings app > Privacy > Location Services > WeatherGift to enable location services in this app")
+            }
         case .restricted:
-            print("Can't show location, probably parental controls")
+            showAlert(title: "Location services denied", message: "It may be that parental controls are restricting location use in this app")
             
         }
+    }
+    
+    func showAlert(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(defaultAction)
+        present(alertController, animated: true , completion: nil)
+        
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -101,7 +115,7 @@ extension DetailVC: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        if currentPage == 0 {
+        if currentPage == 0 && self.view.window != nil {
             
             let geoCoder = CLGeocoder()
             
@@ -120,7 +134,7 @@ extension DetailVC: CLLocationManagerDelegate {
                     let placemark = placemarks!.last
                     place = (placemark?.name!)!
                 } else {
-                    print("Error retrieving place. Error code: \(error)")
+                    print("Error retrieving place. Error code: \(String(describing: error))")
                     place = "Parts Unknown"
                 }
                 print(place)

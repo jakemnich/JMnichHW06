@@ -119,7 +119,7 @@ extension ListVC: UITableViewDataSource, UITableViewDelegate {
     }
     
     func updateTable(placeName: GMSPlace) {
-        var newLocation = WeatherLocation()
+        let newLocation = WeatherLocation()
         newLocation.name = placeName.name
         let lat = placeName.coordinate.latitude
         let long = placeName.coordinate.longitude
