@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 import SwiftyJSON
 
-class WeatherLocation {
+class WeatherLocation: WeatherUserDefault {
     struct DailyForecast {
         var dailyMaxTemp: Double
         var dailyMinTemp: Double
@@ -26,8 +26,6 @@ class WeatherLocation {
         var hourlyPrecipProb: Double
     }
     
-    var name = ""
-    var coordinates = ""
     var currentTemp = -999.999
     var dailySummary = ""
     var currentIcon = ""

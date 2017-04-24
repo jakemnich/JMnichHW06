@@ -46,8 +46,13 @@ class DetailVC: UIViewController {
         locationLabel.isHidden = isHidden
         
         locationLabel.text = locationsArray[currentPage].name
-        dateLabel.text = formatTimeForTimeZone(unixDateToFormat: locationsArray[currentPage].currentTime, timeZoneString: locationsArray[currentPage].timeZone)
-        // dateLabel.text = locationsArray[currentPage].coordinates
+        
+        if locationsArray[currentPage].currentTime == 0.0 {
+            dateLabel.text = ""
+        } else {
+            dateLabel.text = formatTimeForTimeZone(unixDateToFormat: locationsArray[currentPage].currentTime, timeZoneString: locationsArray[currentPage].timeZone)
+        }
+        
         let curTemperature = String(format: "%3.f", locationsArray[currentPage].currentTemp) + "°"
         temperatureLabel.text = curTemperature
         summaryLabel.text = locationsArray[currentPage].dailySummary
